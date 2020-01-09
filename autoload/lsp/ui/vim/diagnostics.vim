@@ -22,6 +22,21 @@ function! lsp#ui#vim#diagnostics#handle_text_document_publish_diagnostics(server
 endfunction
 
 function! lsp#ui#vim#diagnostics#document_diagnostics() abort
+    let l:result = []
+    let l:result = lsp#ui#vim#diagnostics#get_diagnostics_result()
+    call setloclist(0, l:result)
+
+    " autocmd FileType qf setlocal wrap
+
+    if empty(l:result)
+        call lsp#utils#error('No diagnostics results found')
+    else
+        echo 'Retrieved diagnostics results'
+        botright lopen
+    endif
+endfunction
+
+function! lsp#ui#vim#diagnostics#get_diagnostics_result() abort
     if !g:lsp_diagnostics_enabled
         call lsp#utils#error('Diagnostics manually disabled -- g:lsp_diagnostics_enabled = 0')
         return
@@ -39,19 +54,8 @@ function! lsp#ui#vim#diagnostics#document_diagnostics() abort
     for [l:server_name, l:data] in items(l:diagnostics)
         let l:result += lsp#ui#vim#utils#diagnostics_to_loc_list(l:data)
     endfor
-
-    call setloclist(0, l:result)
-
-    " autocmd FileType qf setlocal wrap
-
-    if empty(l:result)
-        call lsp#utils#error('No diagnostics results found')
-    else
-        echo 'Retrieved diagnostics results'
-        botright lopen
-    endif
+    return l:result
 endfunction
-
 " Returns a diagnostic object, or empty dictionary if no diagnostics are available.
 "
 " Note: Consider renaming this method (s/diagnostics/diagnostic) to make
