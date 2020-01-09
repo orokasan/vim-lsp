@@ -29,6 +29,7 @@ augroup _lsp_silent_
     autocmd User lsp_float_opened silent
     autocmd User lsp_float_closed silent
     autocmd User lsp_buffer_enabled silent
+    autocmd User lsp_diagnostic_done silent
 augroup END
 
 function! lsp#log_verbose(...) abort
